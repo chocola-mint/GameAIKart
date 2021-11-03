@@ -40,6 +40,7 @@ public class PickUpManager : MonoBehaviour
     private int currentID;
     private List<GameObject> ListOfCar;
     private List<CarStats> ListOfCarStats;
+    private List<float> ListOfEffects;
 
     public enum PickUpType { Wheel, Gas, Nitro, Turtle, Banana }
 
@@ -48,6 +49,7 @@ public class PickUpManager : MonoBehaviour
         instance = this;
         currentID = 0;
         ListOfCarStats = new List<CarStats>();
+        ListOfEffects = new List<float>();
     }
 
     void Start()
@@ -62,6 +64,17 @@ public class PickUpManager : MonoBehaviour
         kart.MyID = currentID;
         currentID++;
         ListOfCarStats.Add(new CarStats(Wheel.MaxAmount, Gas.MaxAmount));
+        ListOfEffects.Add(1.0f);
+    }
+
+    public void EnterEffect(float modifier, int ID)
+    {
+        ListOfEffects[ID] = modifier;
+    }
+
+    public void LeaveEffect(int ID)
+    {
+        ListOfEffects[ID] = 1.0f;
     }
 
     public void PickUp(PickUpType pickUpType, int ID)
@@ -132,6 +145,8 @@ public class PickUpManager : MonoBehaviour
             ListOfCarStats[i].CurrentWheel -= (Wheel.ConsumeRate / 100.0f) * Time.deltaTime * ListOfCar[i].GetComponent<Rigidbody>().velocity.sqrMagnitude;
             if (ListOfCarStats[i].CurrentWheel < Wheel.MaxAmount * SlowThreshold)
                 speedMod *= SlowRatio;
+
+            speedMod *= ListOfEffects[i];
 
             ListOfCar[i].GetComponent<KartGame.KartSystems.ArcadeKart>().speedModifier = speedMod;
         }
