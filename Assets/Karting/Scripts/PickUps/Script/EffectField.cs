@@ -26,6 +26,8 @@ public class EffectField : MonoBehaviour
             Gizmos.color = new Color(0, 0, SpeedModifier - 1.0f, 0.5f);
         else
             Gizmos.color = new Color(1.0f - SpeedModifier, 0, 0, 0.5f);
-        Gizmos.DrawCube(transform.position, transform.localScale);
+
+        Gizmos.matrix = this.transform.localToWorldMatrix;
+        Gizmos.DrawCube(Vector3.zero, Vector3.one);
     }
 }

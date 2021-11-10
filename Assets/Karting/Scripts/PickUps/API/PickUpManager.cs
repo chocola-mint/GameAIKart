@@ -10,6 +10,9 @@ public class PickUpManager : MonoBehaviour
     // Singleton
     public static PickUpManager instance;
 
+    [SerializeField]
+    private int PlayerID = 0;
+
     [Header("UI")]
     [SerializeField]
     private Image wheelBar;
@@ -130,6 +133,11 @@ public class PickUpManager : MonoBehaviour
                 pfB.GetComponent<BoostUI>().Initialize(Banana.Duration, Color.yellow, "B");
                 break;
         }
+    }
+
+    public bool Undrivable()
+    {
+        return ListOfCarStats[PlayerID].CurrentGas <= 0.0f || ListOfCarStats[PlayerID].CurrentWheel <= 0.0f;
     }
 
     void Update()
