@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7838230637318647233}
   - component: {fileID: 7838230637318647234}
   - component: {fileID: 4457079759717410241}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: pfBanana
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68,6 +68,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 6d05be1b78e41a948b8d50bee67bce65, type: 3}
       propertyPath: m_Name
       value: Banana
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 6d05be1b78e41a948b8d50bee67bce65, type: 3}
+      propertyPath: m_Layer
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 6d05be1b78e41a948b8d50bee67bce65, type: 3}
       propertyPath: m_RootOrder

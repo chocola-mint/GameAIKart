@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3429464476426970270}
   - component: {fileID: 4851760737008080304}
   - component: {fileID: 5779450565981241831}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Rubber
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 6689078531340444291}
   - component: {fileID: 6689078531340444288}
   - component: {fileID: 6689078531340444295}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: pfWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -151,7 +151,7 @@ GameObject:
   - component: {fileID: 4748521330306984899}
   - component: {fileID: 2817040656260158815}
   - component: {fileID: 4771959835510656408}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Metal
   m_TagString: Untagged
   m_Icon: {fileID: 0}

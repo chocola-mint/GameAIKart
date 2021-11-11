@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8603874634579887168}
   - component: {fileID: 8603874634579887181}
   - component: {fileID: 8603874634579887170}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Can
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 8603874635077537316}
   - component: {fileID: 8603874635077537318}
   - component: {fileID: 8603874635077537319}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Cap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -173,7 +173,7 @@ GameObject:
   - component: {fileID: 8603874636063020275}
   - component: {fileID: 8603874636063020272}
   - component: {fileID: 2765553512831743007}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: pfGasCan
   m_TagString: Untagged
   m_Icon: {fileID: 0}

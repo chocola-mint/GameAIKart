@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1006360913888964676}
   - component: {fileID: 1006360913888964698}
   - component: {fileID: 1006360913888964699}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Bottle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 8690324769371466421}
   - component: {fileID: 8690324769371466423}
   - component: {fileID: 8690324769371466422}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Cap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -173,7 +173,7 @@ GameObject:
   - component: {fileID: 8690324769962717282}
   - component: {fileID: 8690324769962717281}
   - component: {fileID: 8690324769962717287}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: pfNitro
   m_TagString: Untagged
   m_Icon: {fileID: 0}
