@@ -16,13 +16,12 @@ def get_img(behavior_spec: BehaviorSpec, obs_list: List[np.ndarray]):
   for index, obs_spec in enumerate(behavior_spec.observation_specs):
     obs = obs_list[index]
     # 3-dimensional observation (Image)
-    if len(obs_spec.shape) == 3:
-      if config.DEBUG == DebugMode.DETAIL:
-        # the first dimension is for batch (even if batch is not used)
-        image_tensor = obs[0,:,:,:] # [N,H,W,C] = [Batch, Height, Width, Channel(RGB)]
-        img = 255 * image_tensor # Scale from [0,1] to [0,255]
-        img = PIL.Image.fromarray(img.astype(np.uint8)) # Convert to PIL format
-        return img
+    if len(obs_spec.shape) == 3 and obs_spec.name == 'CameraSensorFront':
+      # the first dimension is for batch (even if batch is not used)
+      image_tensor = obs[0,:,:,:] # [N,H,W,C] = [Batch, Height, Width, Channel(RGB)]
+      img = 255 * image_tensor # Scale from [0,1] to [0,255]
+      img = PIL.Image.fromarray(img.astype(np.uint8)) # Convert to PIL format
+      return img
   pass
 
 def show_observation(obs: np.ndarray, obs_spec: ObservationSpec, img_id) -> None:
