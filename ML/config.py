@@ -33,4 +33,4 @@ DEMO_DIR: str = 'Demo'
 DEMO_FILE: str = 'demo.demo'
 
 # Max Episodes for online
-MAX_EPISODES: int = 10
+MAX_EPISODES: int = 1000

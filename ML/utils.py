@@ -4,6 +4,12 @@ from typing import List, Optional
 import numpy as np
 import PIL
 
+# TEMPORARY
+from dqn import DQNAgent
+import torch
+import torchvision
+
+
 from mlagents_envs.environment import UnityEnvironment
 from mlagents_envs.base_env import BehaviorSpec, ActionTuple, ObservationSpec
 from mlagents.trainers import demo_loader
@@ -11,7 +17,8 @@ from mlagents.trainers.buffer import AgentBuffer, BufferKey, ObservationKeyPrefi
 
 import config
 from config import DebugMode
-
+def epsilon_compute(frame_id, epsilon_max=1, epsilon_min=0.05, epsilon_decay=5*100000):
+    return epsilon_min + (epsilon_max - epsilon_min) * np.exp(-frame_id / epsilon_decay)
 def get_img(behavior_spec: BehaviorSpec, obs_list: List[np.ndarray]):
   for index, obs_spec in enumerate(behavior_spec.observation_specs):
     obs = obs_list[index]
@@ -19,9 +26,7 @@ def get_img(behavior_spec: BehaviorSpec, obs_list: List[np.ndarray]):
     if len(obs_spec.shape) == 3 and obs_spec.name == 'CameraSensorFront':
       # the first dimension is for batch (even if batch is not used)
       image_tensor = obs[0,:,:,:] # [N,H,W,C] = [Batch, Height, Width, Channel(RGB)]
-      img = 255 * image_tensor # Scale from [0,1] to [0,255]
-      img = PIL.Image.fromarray(img.astype(np.uint8)) # Convert to PIL format
-      return img
+      return np.add.reduce(torchvision.transforms.CenterCrop(84)(torch.tensor(image_tensor).swapaxes(0, 2)), 0, keepdims = True)
   pass
 
 def show_observation(obs: np.ndarray, obs_spec: ObservationSpec, img_id) -> None:
@@ -75,6 +80,28 @@ def back_ray_vector_to_reward(ray_vector) -> float:
       #   reward -= 100 # big penalty when too close to wall
       # else: reward += dist
   return reward
+
+def flatten_observation(obs: np.ndarray, obs_spec: ObservationSpec):
+  # 3-dimensional observation (Image)
+  if len(obs_spec.shape) == 3:
+    # the first dimension is for batch (even if batch is not used)
+    image_tensor = obs[0,:,:,:] # [N,H,W,C] = [Batch, Height, Width, Channel(RGB)]
+    return image_tensor
+  # 1-dimensional observation (Vector)
+  if len(obs_spec.shape) == 1:
+    #if config.DEBUG != DebugMode.DISABLE:
+    # the first dimension is for batch (even if batch is not used)
+    ray_vector = obs[0,:]
+    return ray_vector
+def get_observation_vector(behavior_spec:BehaviorSpec, obs_list:List[np.ndarray]):
+  tensors = []
+  for index, obs_spec in enumerate(behavior_spec.observation_specs):
+    obs = obs_list[index]
+    # 3-dimensional observation (Image)
+    if len(obs_spec.shape) == 3:
+      # the first dimension is for batch (even if batch is not used)
+      image_tensor = obs[0,:,:,:] # [N,H,W,C] = [Batch, Height, Width, Channel(RGB)]
+      return torch.tensor(image_tensor)
 
 def observation_to_reward(obs: np.ndarray, obs_spec: ObservationSpec) -> float:
   # Place to store the images
@@ -147,12 +174,26 @@ def online(env: UnityEnvironment, behavior_name: str, random: bool = False) -> N
 
   total_steps = 0 # Total number of steps for all episodes
   max_steps_per_episode = 10000
-  img_size = (112, 252)
+  img_size = (84, 84)
+
+  # TEMP: INITIALIZE AGENT
+  agent = DQNAgent(
+    action_space_n = 1, 
+    stack_frames = 1, 
+    img_size = img_size
+  )
 
   for episode in range(1, config.MAX_EPISODES + 1):
     done = False # Flag to indicate whether the episode has done
     step_num = 0  # The number of steps in an episode
+    decision_steps, terminal_steps = env.get_steps(behavior_name)
+    for agent_id in decision_steps:
+      state = get_img(behavior_spec, decision_steps.obs)
+    total_reward = 0
     while not done:
+      # Move the simulation forward
+      env.step()
+      epsilon = epsilon_compute(total_steps)
 
       # Actually, it should be increased by Decision Period, but for convenience, we just add one
       total_steps += 1
@@ -163,11 +204,14 @@ def online(env: UnityEnvironment, behavior_name: str, random: bool = False) -> N
       # Show the step information
       if config.DEBUG != DebugMode.DISABLE:
         print('Episode: ' + str(episode) + ', Step: ' + str(step_num))
-      # state = get_img(behavior_spec, decision_steps.obs)
+      
       for agent_id in decision_steps:
+        state_next = get_img(behavior_spec, decision_steps.obs)
+        #print(state_next.shape)
         # Show observations
         show_observations(behavior_spec, decision_steps.obs, str(episode) + '_' + str(step_num))
         reward += observations_to_rewards(behavior_spec, decision_steps.obs)
+        total_reward += reward
         # Generate an action for all agents randomly
         #if random:
           #actions = behavior_spec.action_spec.random_action(len(decision_steps))
@@ -178,7 +222,12 @@ def online(env: UnityEnvironment, behavior_name: str, random: bool = False) -> N
           #actions = ActionTuple(discrete=discrete_actions, continuous=continuous_actions)
         # TODO: Send image (state) to DQN, and get continuous actions (turning) back.
         discrete_actions = np.array([[1,0]], dtype=np.int32)
-        #continuous_actions = agent.choose_action(state, 0)
+        continuous_actions = agent.choose_action(state, epsilon)
+        # TODO(Lab-7): Train RL model.
+        agent.store_transition(state, continuous_actions[0], reward, state_next, done)
+        if total_steps > agent.batch_size:
+            # Learn after collecting data wth numbers of 4 batch size.
+            loss = agent.learn()
         actions = ActionTuple(discrete=discrete_actions, continuous=continuous_actions)
         # actions = ...
   
@@ -211,8 +260,11 @@ def online(env: UnityEnvironment, behavior_name: str, random: bool = False) -> N
       if config.DEBUG != DebugMode.DISABLE:
         print()
       
-      # Move the simulation forward
-      env.step()
+      if total_steps % 100 == 0 or done:
+          print('\rEpisode: {:3d} | Step: {:3d} / {:3d} | Reward: {:.3f} / {:.3f} | Loss: {:.3f} | Epsilon: {:.3f}'\
+              .format(episode, step_num, total_steps, reward, total_reward, loss, epsilon), end="")
+      
+      state = torch.clone(state_next)
     # env.reset()
     print('Finish, Behavior: ' + str(behavior_name) + ', Agent: ' + str(agent_id) + ', Episodes: ' + str(episode) + ', Total Steps: ' + str(total_steps))
 
