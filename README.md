@@ -1,5 +1,5 @@
 # GameAIKart
-This is a Full project folder, you can click Add on the Unity Hub to open the project after downloading, and the game scene is in Assets/Karting/Scenes/MainScene.
+This is a Full project folder, you can click Add on the Unity Hub to open the project after downloading, and the game scene is in Assets/Karting/Scenes/PAIAScene.
 
 ## Table of contents
 - [GameAIKart](#gameaikart)
@@ -10,10 +10,9 @@ This is a Full project folder, you can click Add on the Unity Hub to open the pr
   - [Game Props](#game-props)
     - [Supplementary props](#supplementary-props)
     - [Usage Props](#usage-props)
-  - [Additional Track](#additional-track)
   - [Technologies](#technologies)
   - [Usage](#usage)
-  - [ML-Agents](#ml-agents)
+  - [PAIA 機器學習平台](#paia-機器學習平台)
 
 ## Overview
 GameAIKart is a 3D racing game made in Unity. We designed it to let everyone can build each type of scene for training the AIKart.
@@ -44,25 +43,15 @@ GameAIKart is a 3D racing game made in Unity. We designed it to let everyone can
 * "Turtle" : Decrease speed
 * "Banana" : Influence the value of steer
 
-## Additional Track
-We only provide the basic track of the game, and there are still other tracks in MainScene/AdditionalTrack can be built for the training process with ML-Agents. 
-
 ## Technologies
 * Unity 2020.3.14f1
 
 ## Usage
-
-This game can be played [here]()!  
 This repository contains everything needed to get the project up and running on Unity. Just clone the repository and open the project in Unity to edit the game yourself.
 
-遊戲場景在 Assets/Karting/Scenes/MainScene
+遊戲場景在 Assets/Karting/Scenes/PAIAScene，只要 Build 這個場景就好！
 
-## ML-Agents
-機器學習的部分放在 `ML` 資料夾中，啟動方式：
-```
-cd ML
-python ml.py
-```
-打開之後再去 Unity 畫面點播放鍵（如果是在開發時）
+## PAIA 機器學習平台
+機器學習的部分放在 `PAIA` 資料夾中，使用方法請參考：[PAIA 賽車機器學習平台](PAIA)
 
 注意：Python Unity 的 ML-Agents 的版本要對好，本專案用的是 Release 17

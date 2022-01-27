@@ -1,0 +1,4 @@
+mlagents
+numpy
+PIL
+websockets
