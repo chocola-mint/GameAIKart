@@ -1,4 +1,4 @@
-from __future__ import annotations
+#from __future__ import annotations
 import logging
 from typing import List, Optional, Union
 from pathlib import Path
@@ -181,7 +181,7 @@ class Demo:
             return [step.action for step in self.demo.episodes[episode].steps]
         return None
     
-    def create_demo() -> Demo:
+    def create_demo():
         demo = Demo()
         demo.create_episode()
         return demo

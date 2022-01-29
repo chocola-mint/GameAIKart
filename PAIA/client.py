@@ -12,7 +12,6 @@ import config
 def run(id: str='', filepath: str='ml_play') -> None:
     channel = grpc.insecure_channel('localhost:50051')
     stub = PAIA_pb2_grpc.PAIAStub(channel)
-
     # Get the module (the definition of the MLPlay class) name
     if os.path.isabs(filepath):
         module = os.path.relpath(filepath, start=os.path.dirname(__file__))
@@ -34,18 +33,22 @@ def run(id: str='', filepath: str='ml_play') -> None:
         if state.event != PAIA.Event.EVENT_NONE:
             if action.command == PAIA.Command.COMMAND_FINISH:
                 # Terminate the process if want to finish
+                # print("client: FINISH")
                 state = stub.hook(action)
                 action = brain.decision(state)
                 break
             elif action.command == PAIA.Command.COMMAND_RESTART or state.event == PAIA.Event.EVENT_RESTART:
                 # If the user want to restart, then don't do extra things
+                # print("client: RESTART")
                 pass
             else:
                 # Force to finish when the user doesn't want to restart
+                # print("client: FORCE FINISH")
                 action.command = PAIA.Command.COMMAND_FINISH
                 state = stub.hook(action)
                 action = brain.decision(state)
                 break
+        # else: print("client: EVENT_NONE")
 
 if __name__ == '__main__':
     id = str(sys.argv[1]) if len(sys.argv) > 1 else ''
